@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kejutan Ulang Tahun 💙</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600&family=Nunito:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 50%, #93c5fd 100%);
+            overflow: hidden; /* Prevent scrolling to keep it app-like */
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            color: #1e3a8a;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Screen Transitions */
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease-in-out;
+            z-index: 10;
+        }
+        .screen.active {
+            opacity: 1;
+            pointer-events: auto;
+            z-index: 20;
+        }
+
+        /* Animations */
+        @keyframes pulse-soft {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-soft {
+            animation: pulse-soft 2s infinite;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(110vh) scale(1) rotate(-5deg); opacity: 1; }
+            100% { transform: translateY(-20vh) scale(1.1) rotate(5deg); opacity: 0.8; }
+        }
+
+        .balloon-anim {
+            position: absolute;
+            bottom: -150px;
+            cursor: pointer;
+            animation: float-up linear forwards;
+            transition: transform 0.1s;
+        }
+        .balloon-anim:active {
+            transform: scale(0.9);
+        }
+        .balloon-pop {
+            transform: scale(1.5);
+            opacity: 0;
+            transition: all 0.2s;
+        }
+
+        /* Candle Flicker */
+        @keyframes flicker {
+            0% { transform: scale(1); opacity: 1; }
+            25% { transform: scale(1.1) rotate(-2deg); opacity: 0.9; }
+            50% { transform: scale(0.9) rotate(2deg); opacity: 1; }
+            75% { transform: scale(1.05) rotate(-1deg); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .flame {
+            transform-origin: bottom center;
+            animation: flicker 0.5s infinite alternate;
+        }
+        .flame-out {
+            display: none;
+        }
+
+        /* Cake Bounce */
+        @keyframes bounce-cake {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .cake-container {
+            animation: bounce-cake 3s ease-in-out infinite;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #3b82f6;
+            animation: fall linear forwards;
+        }
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(720deg); }
+        }
+
+        /* Polaroid Style */
+        .polaroid {
+            background: white;
+            padding: 10px 10px 25px 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            transform: rotate(-3deg);
+            transition: transform 0.3s ease;
+        }
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05);
+            z-index: 50;
+        }
+
+        /* Tombol Audio (opsional jika autoplay diblokir browser) */
+        #audio-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            display: none;
+            background: white;
+            padding: 8px;
+            border-radius: 50%;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Element -->
+    <audio id="hbd-audio" loop>
+        <!-- Menggunakan musik instrumental Happy Birthday yang public domain / royalty free -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-50.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- Tombol Play Audio Manual (Merespons aturan Autoplay Browser) -->
+    <button id="audio-controls" onclick="toggleAudio()">
+        <svg id="audio-icon-play" class="hidden w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+        <svg id="audio-icon-pause" class="w-6 h-6 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+    </button>
+
+    <!-- SCREEN 1: Intro -->
+    <div id="screen-1" class="screen active text-center p-6">
+        <div class="bg-white/50 backdrop-blur-sm p-8 rounded-3xl shadow-xl border-4 border-blue-200">
+            <div class="text-6xl mb-4">💌</div>
+            <h1 class="text-4xl font-bold text-blue-600 mb-2">Haloooo Cantik!</h1>
+            <p class="text-lg text-blue-800 mb-8 font-medium">Ada paket spesial warna biru nih buat kamu...</p>
+            <button onclick="nextScreen(1)" class="animate-pulse-soft bg-blue-500 hover:bg-blue-600 text-white font-bold py-4 px-8 rounded-full shadow-lg shadow-blue-300 transform transition active:scale-95 text-xl">
+                Buka Sekarang! 🎁
+            </button>
+        </div>
+    </div>
+
+    <!-- SCREEN 2: Balloon Game -->
+    <div id="screen-2" class="screen text-center p-6 relative">
+        <div class="z-20 bg-white/70 backdrop-blur-md px-6 py-4 rounded-2xl shadow-md border-2 border-blue-200 mb-auto mt-10">
+            <h2 class="text-2xl font-bold text-blue-600 mb-1">Misi Pertama! 🎈</h2>
+            <p class="text-blue-800 font-medium">Pecahin <span id="balloon-count" class="text-2xl font-bold text-blue-600">5</span> balon biru biar bisa lanjut!</p>
+        </div>
+        <div id="balloon-container" class="absolute inset-0 z-10 overflow-hidden pointer-events-none">
+            <!-- Balloons generated by JS -->
+        </div>
+    </div>
+
+    <!-- SCREEN 3: The Cake -->
+    <div id="screen-3" class="screen text-center p-6">
+        <div class="z-20 mb-8">
+            <h2 class="text-4xl font-bold text-blue-600 mb-2">Yeay Berhasil! 🎂</h2>
+            <p class="text-xl text-blue-800 font-medium bg-white/50 px-4 py-2 rounded-full inline-block">Sekarang make a wish, terus sentuh apinya buat tiup lilin!</p>
+        </div>
+        
+        <div class="cake-container cursor-pointer z-20" onclick="blowCandles()">
+            <!-- SVG Cake -->
+            <svg width="250" height="300" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Plate -->
+                <ellipse cx="100" cy="230" rx="90" ry="20" fill="#cbd5e1" />
+                <ellipse cx="100" cy="225" rx="80" ry="15" fill="#f8fafc" />
+                
+                <!-- Cake Base Layer -->
+                <rect x="40" y="160" width="120" height="60" rx="10" fill="#93c5fd" />
+                <!-- Cake Top Layer -->
+                <rect x="55" y="110" width="90" height="60" rx="8" fill="#60a5fa" />
+                
+                <!-- Icing Base Layer -->
+                <path d="M 40 160 Q 50 180 60 160 Q 70 180 80 160 Q 90 180 100 160 Q 110 180 120 160 Q 130 180 140 160 Q 150 180 160 160 L 160 170 L 40 170 Z" fill="#eff6ff" />
+                <!-- Icing Top Layer -->
+                <path d="M 55 110 Q 65 130 75 110 Q 85 130 95 110 Q 105 130 115 110 Q 125 130 135 110 Q 145 130 145 110 L 145 120 L 55 120 Z" fill="#eff6ff" />
+
+                <!-- Decor dots -->
+                <circle cx="60" cy="200" r="4" fill="#3b82f6" />
+                <circle cx="100" cy="200" r="4" fill="#3b82f6" />
+                <circle cx="140" cy="200" r="4" fill="#3b82f6" />
+                <circle cx="75" cy="150" r="4" fill="#1d4ed8" />
+                <circle cx="125" cy="150" r="4" fill="#1d4ed8" />
+
+                <!-- Candles -->
+                <!-- Left Candle -->
+                <rect x="75" y="70" width="8" height="40" rx="2" fill="#fcd34d" />
+                <rect x="75" y="75" width="8" height="5" fill="#f59e0b" />
+                <rect x="75" y="85" width="8" height="5" fill="#f59e0b" />
+                <!-- Center Candle -->
+                <rect x="96" y="60" width="8" height="50" rx="2" fill="#fcd34d" />
+                <rect x="96" y="65" width="8" height="5" fill="#f59e0b" />
+                <rect x="96" y="75" width="8" height="5" fill="#f59e0b" />
+                <!-- Right Candle -->
+                <rect x="117" y="70" width="8" height="40" rx="2" fill="#fcd34d" />
+                <rect x="117" y="75" width="8" height="5" fill="#f59e0b" />
+                <rect x="117" y="85" width="8" height="5" fill="#f59e0b" />
+
+                <!-- Flames -->
+                <g id="flames">
+                    <path class="flame" d="M 79 68 Q 74 58 79 50 Q 84 58 79 68" fill="#ef4444" />
+                    <path class="flame" d="M 79 65 Q 77 58 79 54 Q 81 58 79 65" fill="#fef08a" />
+                    
+                    <path class="flame" style="animation-delay: 0.1s" d="M 100 58 Q 95 48 100 40 Q 105 48 100 58" fill="#ef4444" />
+                    <path class="flame" style="animation-delay: 0.1s" d="M 100 55 Q 98 48 100 44 Q 102 48 100 55" fill="#fef08a" />
+                    
+                    <path class="flame" style="animation-delay: 0.2s" d="M 121 68 Q 116 58 121 50 Q 126 58 121 68" fill="#ef4444" />
+                    <path class="flame" style="animation-delay: 0.2s" d="M 121 65 Q 119 58 121 54 Q 123 58 121 65" fill="#fef08a" />
+                </g>
+            </svg>
+        </div>
+    </div>
+
+    <!-- SCREEN 4: Final Message & Photo -->
+    <div id="screen-4" class="screen text-center p-6 overflow-y-auto">
+        <div id="confetti-container" class="absolute inset-0 pointer-events-none z-0"></div>
+        
+        <div class="z-20 max-w-md w-full bg-white/60 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border-4 border-white mt-10">
+            <h1 class="text-4xl font-bold text-blue-600 mb-2 drop-shadow-sm">Happy Birthday!</h1>
+            <h2 class="text-2xl font-bold text-blue-500 mb-6">Sayangku! 💙🎉</h2>
+            
+            <!-- PHOTO SECTION -->
+            <div class="flex justify-center mb-6">
+                <div class="polaroid">
+                    <!-- GANTI FOTO DI SINI -->
+                    <img src="IMG/my pretty girl.gif" 
+                         alt="Foto Pacar" 
+                         class="w-44 aspect-[9/16] object-cover rounded-sm border border-gray-200">
+                    <p class="text-gray-600 font-medium text-sm mt-3 font-['Comic_Sans_MS']">My Favorite Time 🦋</p>
+                </div>
+            </div>
+
+            <div class="bg-blue-50 rounded-2xl p-4 shadow-inner">
+                <p class="text-blue-900 font-medium leading-relaxed mb-3">
+                    Selamat ulang tahun ya cantik! Semoga di umur yang baru ini kamu makin bahagia, makin sehat, rezekinya lancar, dan pastinya makin sayang sama aku hehe 😋.
+                </p>
+                <p class="text-blue-900 font-medium leading-relaxed">
+                    Maaf ya kejutannya cuma lewat web lucu-lucuan gini, warna biru kesukaan kamu kan? Love you to the moon and back! 🚀💙
+                </p>
+            </div>
+
+            <button onclick="window.location.reload()" class="mt-6 text-blue-400 hover:text-blue-600 underline text-sm font-bold">
+                Ulangi Animasi ↺
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let targetBalloons = 5;
+        let poppedBalloons = 0;
+        let balloonInterval;
+
+        function nextScreen(current) {
+            document.getElementById(`screen-${current}`).classList.remove('active');
+            document.getElementById(`screen-${current + 1}`).classList.add('active');
+
+            if (current + 1 === 2) {
+                startBalloonGame();
+            }
+        }
+
+        // --- BALLOON GAME LOGIC ---
+        function startBalloonGame() {
+            const container = document.getElementById('balloon-container');
+            const colors = ['#60a5fa', '#3b82f6', '#93c5fd', '#bfdbfe', '#2563eb']; 
+            
+            balloonInterval = setInterval(() => {
+                if (document.getElementById('screen-2').classList.contains('active')) {
+                    createBalloon(container, colors);
+                } else {
+                    clearInterval(balloonInterval);
+                }
+            }, 400); 
+        }
+
+        function createBalloon(container, colors) {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon-anim pointer-events-auto';
+            
+            const leftPos = Math.random() * 80 + 10; 
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const scale = Math.random() * 0.4 + 1.1; 
+            const duration = Math.random() * 4 + 6; 
+
+            balloon.style.left = `${leftPos}%`;
+            balloon.style.animationDuration = `${duration}s`;
+            balloon.style.transform = `scale(${scale})`;
+
+            // SVG Balon Bulat
+            balloon.innerHTML = `
+                <svg width="80" height="110" viewBox="0 0 80 110" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0px 5px 5px rgba(0,0,0,0.2));">
+                    <circle cx="40" cy="40" r="38" fill="${color}" stroke="rgba(255,255,255,0.4)" stroke-width="1"/>
+                    <path d="M 32 75 C 35 85 45 85 48 75 Z" fill="${color}" />
+                    <path d="M 40 82 Q 30 95 40 108" fill="transparent" stroke="rgba(255,255,255,0.8)" stroke-width="2"/>
+                    <path d="M 15 25 C 20 12 35 10 45 15" fill="transparent" stroke="rgba(255,255,255,0.5)" stroke-width="5" stroke-linecap="round" />
+                    <circle cx="22" cy="18" r="4" fill="rgba(255,255,255,0.6)" />
+                </svg>
+            `;
+
+            balloon.onclick = function() {
+                this.classList.add('balloon-pop');
+                poppedBalloons++;
+                
+                let remaining = targetBalloons - poppedBalloons;
+                if(remaining < 0) remaining = 0;
+                document.getElementById('balloon-count').innerText = remaining;
+
+                setTimeout(() => {
+                    if (this.parentNode) this.parentNode.removeChild(this);
+                }, 200);
+
+                if (poppedBalloons >= targetBalloons) {
+                    clearInterval(balloonInterval);
+                    setTimeout(() => {
+                        nextScreen(2);
+                    }, 500);
+                }
+            };
+
+            container.appendChild(balloon);
+
+            setTimeout(() => {
+                if (balloon.parentNode && !balloon.classList.contains('balloon-pop')) {
+                    balloon.parentNode.removeChild(balloon);
+                }
+            }, duration * 1000);
+        }
+
+        // --- CAKE LOGIC ---
+        function blowCandles() {
+            const flames = document.getElementById('flames');
+            if (!flames.classList.contains('flame-out')) {
+                flames.style.transition = "opacity 0.5s";
+                flames.style.opacity = "0";
+                
+                setTimeout(() => {
+                    flames.classList.add('flame-out');
+                    setTimeout(() => {
+                        nextScreen(3);
+                        startConfetti();
+                        playAudio();
+                    }, 1000);
+                }, 500);
+            }
+        }
+
+        // --- AUDIO LOGIC ---
+        const audio = document.getElementById('hbd-audio');
+        const audioBtn = document.getElementById('audio-controls');
+        const iconPlay = document.getElementById('audio-icon-play');
+        const iconPause = document.getElementById('audio-icon-pause');
+
+        function playAudio() {
+            audio.volume = 0.6; 
+            let playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    audioBtn.style.display = "block";
+                    iconPlay.classList.add('hidden');
+                    iconPause.classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.log("Autoplay dicegah oleh browser, tampilkan tombol play.");
+                    audioBtn.style.display = "block";
+                    iconPlay.classList.remove('hidden');
+                    iconPause.classList.add('hidden');
+                });
+            }
+        }
+
+        function toggleAudio() {
+            if (audio.paused) {
+                audio.play();
+                iconPlay.classList.add('hidden');
+                iconPause.classList.remove('hidden');
+            } else {
+                audio.pause();
+                iconPlay.classList.remove('hidden');
+                iconPause.classList.add('hidden');
+            }
+        }
+
+        // --- CONFETTI LOGIC ---
+        function startConfetti() {
+            const container = document.getElementById('confetti-container');
+            const colors = ['#3b82f6', '#60a5fa', '#93c5fd', '#ffffff', '#fcd34d'];
+
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    
+                    const left = Math.random() * 100;
+                    const color = colors[Math.floor(Math.random() * colors.length)];
+                    const size = Math.random() * 8 + 5;
+                    const duration = Math.random() * 3 + 2;
+
+                    confetti.style.left = `${left}%`;
+                    confetti.style.top = `-10px`;
+                    confetti.style.backgroundColor = color;
+                    confetti.style.width = `${size}px`;
+                    confetti.style.height = `${size}px`;
+                    confetti.style.animationDuration = `${duration}s`;
+                    
+                    if (Math.random() > 0.5) confetti.style.borderRadius = '50%';
+
+                    container.appendChild(confetti);
+
+                    setTimeout(() => {
+                        if(confetti.parentNode) confetti.parentNode.removeChild(confetti);
+                    }, duration * 1000);
+                }, i * 50); 
+            }
+        }
+    </script>
+</body>
+</html>
